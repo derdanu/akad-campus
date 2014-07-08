@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="akad-campus">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="akad-campus.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/commons-cli-1.2.jar"/>
+        <pathelement location="lib/jackson-all-1.9.11.jar"/>
+        <pathelement location="lib/jersey-apache-client-1.9-ea04.jar"/>
+		<pathelement location="lib/jersey-bundle-1.18.jar"/>
+		<pathelement location="lib/org-apache-commons-codec.jar"/>
+		<pathelement location="lib/org.apache.commons.httpclient.jar"/>
+		<pathelement location="lib/org-apache-commons-logging.jar"/>
+   </path>
+    
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    	<delete dir="dist"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="akad-campus.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target name="Main (3)">
+        <java classname="de.akadvh.view.Main" failonerror="true" fork="yes">
+            <classpath refid="akadvh.classpath"/>
+        </java>
+    </target>
+	<target name="dist" depends="build-project" description="generate the distribution" >
+	 	<mkdir dir="dist"/>
+	    <jar jarfile="dist/akad-campus.jar" basedir="bin/">
+			<manifest>
+	 	        <attribute name="Main-Class" value="de.akad.Main" />
+			</manifest>
+	    	<zipgroupfileset dir="lib" includes="**/*.jar" />
+		</jar>
+	</target>	
+</project>
